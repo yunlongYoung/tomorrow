@@ -1,0 +1,28 @@
+import pytest
+from sqlalchemy import select
+from engine import session
+from models import Location, House, Family, Person, Permission, VaccineInjection, NucleicAcidTest, Trip
+
+class TestLocation:
+    def test_insert(self):
+        loc1=Location(
+            province='62甘肃', 
+            city='12陇南市',
+            county='26礼县', 
+            country='100城关镇',
+            village='008东城社区',
+            neighborhood='999人间天堂')
+
+        session.add(loc1)
+        # 插入没有异常就是None
+        assert session.commit() is None
+    
+    def test_str_generated(self):
+        assert session.query(Location).first().str == '621226100008999'
+
+    def test_delete(self):
+        stament = select(Location).get(
+            neighborhood='999人间天堂')
+        loc = session.execute(stament).first()
+        session.delete(loc)
+        assert session.commit() is None
